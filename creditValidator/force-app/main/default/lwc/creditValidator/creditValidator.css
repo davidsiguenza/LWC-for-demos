@@ -1,0 +1,19 @@
+.slds-notify_alert {
+    border-radius: 4px;
+    text-align: left;
+    align-items: flex-start;
+    padding: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Fondo naranja corporativo para avisos */
+.slds-alert_warning {
+    background-color: #ff9a3c; 
+    border-color: #ff9a3c;
+    color: #000; /* Texto negro para mejor legibilidad */
+}
+
+/* Ajuste del icono para que se alinee con el título */
+.slds-icon_container {
+    margin-top: 2px;
+}

@@ -1,0 +1,20 @@
+<template>
+    <template if:true={showWarning}>
+        <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-bottom_medium" role="alert">
+            <span class="slds-assistive-text">warning</span>
+            <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small">
+                <lightning-icon icon-name="utility:warning" variant="inverse" size="x-small"></lightning-icon>
+            </span>
+            <div class="slds-text-body_small">
+                <h2 class="slds-text-heading_small"><b>Credit Limit Exceeded</b></h2>
+                <p class="slds-p-top_xx-small">
+                    Your order exceeds your available balance by $<b>{shortageAmount}</b>.
+                    <br/>
+                    The "Purchase Order" payment option is not available for this amount.
+                    <br/>
+                    👉 <b>Please select "Credit Card" to complete your order now.</b>
+                </p>
+            </div>
+        </div>
+    </template>
+</template>

@@ -1,3 +1,11 @@
+# Post Install Instructions
+- Give visibility to site user (Profile > SDO-Cusotmer Community Plus)
+Fields:
+- Locations (Read + View All fields)
+Apex:
+- 	OciInventoryAvailabilityController
+
+
 # Salesforce DX Project: Next Steps
 
 Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.

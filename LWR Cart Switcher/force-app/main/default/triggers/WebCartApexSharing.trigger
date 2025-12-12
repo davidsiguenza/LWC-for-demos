@@ -64,7 +64,7 @@ trigger WebCartApexSharing on WebCart (after insert, after update) {
     if(trigger.isUpdate){
         WebCart wcOld = trigger.old[0];
         WebCart wcNew = trigger.new[0];
-        if (wcOld.Shared__c == false && wcNew.Shared__c == true) {
+        if (wcOld.SDO_SCOM_Shared__c == false && wcNew.SDO_SCOM_Shared__c == true) {
             List<DelegatedAccount> daList = 
                 [SELECT ManagedById FROM DelegatedAccount
                  WHERE TargetId = :wcNew.AccountId];

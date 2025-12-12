@@ -1,0 +1,94 @@
+<template>
+    <div class="container">
+
+        <h2 class="slds-text-heading_medium slds-m-bottom_medium">
+            Upload Order via CSV
+        </h2>
+        
+        <lightning-input
+            type="file"
+            label="Upload CSV File (columns: SKU, Quantity)"
+            accept=".csv"
+            onchange={handleFileChange}>
+        </lightning-input>
+
+        <template lwc:if={isLoading}>
+            <div class="slds-is-relative slds-m-vertical_large">
+                <lightning-spinner alternative-text="Loading..." size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <template lwc:if={products}>
+        <div class="table-responsive">
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-top_medium">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th scope="col"><div class="slds-truncate" title="Product">Product</div></th>
+
+                        <th scope="col"><div class="slds-truncate" title="Quantity">Quantity</div></th>
+                        <th scope="col"><div class="slds-truncate" title="Status">Status</div></th>
+                        <th scope="col" style="width: 3.5rem;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={products} for:item="product">
+                        <tr key={product.sku} class="slds-hint-parent">
+                            <td>
+                                <div class="product-info">
+                                    <div class="product-name"><strong>{product.name}</strong></div>
+                                    <div class="product-sku">SKU# {product.sku}</div>
+                                </div>
+                            </td>
+
+                            
+                            <td>
+                                <lightning-input 
+                                    type="number" 
+                                    variant="label-hidden" 
+                                    value={product.quantity} 
+                                    min="1" 
+                                    data-sku={product.sku}
+                                    onchange={handleQuantityChange}
+                                    disabled={product.isAdded}>
+                                </lightning-input>
+                            </td>
+                            <td>
+                                <lightning-badge
+                                    label={product.status}
+                                    class={product.badgeClass}>
+                                </lightning-badge>
+                            </td>
+                            <td>
+                                <lightning-button-icon 
+                                    icon-name="utility:close" 
+                                    variant="bare" 
+                                    alternative-text="Remove" 
+                                    title="Remove"
+                                    data-sku={product.sku}
+                                    onclick={handleDelete}
+                                    disabled={product.isAdded}>
+                                </lightning-button-icon>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+
+            <div class="slds-align_absolute-center slds-m-top_large">
+                <lightning-button
+                    variant="brand"
+                    label="Add All to Cart"
+                    title="Add All to Cart"
+                    onclick={handleAddToCart}
+                    disabled={isAdding}
+                    class="custom-button">
+                </lightning-button>
+            </div>
+        </template>
+
+        <template lwc:if={errorMessage}>
+            <div class="slds-text-color_error slds-m-top_medium">{errorMessage}</div>
+        </template>
+    </div>
+</template>

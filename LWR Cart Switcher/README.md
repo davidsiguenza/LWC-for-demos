@@ -2,6 +2,12 @@
 
 This component will give your customers the opportunity to manage different active carts and change between them during the commerce experience.
 
+More post install instructions can be found here: https://salesforce.quip.com/EWSpAJb7BO3B
+
+## UPDATE 11 DEC 2025 - NEW SDO Compatible
+
+This update makes the compoent compatible with the new SDO architecture of Commerce on Core. Making some kew changes in filed names
+
 ## UPDATE 19 JAN 2024 - SHARING CAPABILITY ADDED
 
 With this update a new **SHARING** capability have been added.

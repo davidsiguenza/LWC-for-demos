@@ -1,0 +1,176 @@
+.elegant-card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.header-container {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+}
+
+.title-text {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #00853e; /* Brand Color */
+}
+
+/* TABLE STYLES */
+.elegant-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.elegant-table thead th {
+  background-color: #f9f9f9;
+  color: #555;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid #eee;
+  letter-spacing: 0.05em;
+}
+
+.elegant-table tbody tr {
+  border-bottom: 1px solid #f2f2f2;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.elegant-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.elegant-table tbody tr:hover {
+  background-color: #fcfcfc;
+}
+
+.elegant-table td {
+  padding: 0.75rem 1rem;
+  vertical-align: middle;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* LIST VIEW SPECIFIC */
+.attribute-pill {
+  display: block; /* Stack attributes vertically for clarity */
+  margin-bottom: 2px;
+}
+.attr-label {
+  color: #666;
+  font-weight: 400;
+  margin-right: 4px;
+  font-size: 0.85rem;
+}
+.attr-value {
+  color: #000;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.current-badge {
+  display: inline-block;
+  background-color: #e3f2fd;
+  color: #0d47a1;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 0.5rem;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.row-current {
+  background-color: #f0fdf4 !important; /* Slight green tint for current selection */
+  border-left: 4px solid #00853e;
+}
+
+/* MATRIX VIEW SPECIFIC */
+.matrix-table {
+  min-width: 600px; /* Ensure scrolling on small screens */
+}
+
+.corner-cell {
+  background-color: #f3f3f3 !important;
+  border-right: 1px solid #e0e0e0;
+}
+
+.matrix-header {
+  text-align: center;
+  border-left: 1px solid #e0e0e0;
+}
+
+.matrix-row-label {
+  background-color: #fafafa;
+  border-right: 1px solid #e0e0e0;
+  font-weight: 600;
+  color: #333;
+}
+
+.matrix-cell {
+  text-align: center;
+  border-left: 1px solid #f2f2f2;
+  padding: 0.5rem !important;
+}
+
+.matrix-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.matrix-input {
+  width: 60px;
+}
+
+.sku-hint {
+  font-size: 0.65rem;
+  color: #888;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+.empty-cell {
+  color: #ccc;
+  font-size: 1.2rem;
+}
+
+/* FOOTER */
+.footer-action {
+  padding: 1rem;
+  background-color: #fbfbfb;
+  border-top: 1px solid #e0e0e0;
+  text-align: right;
+}
+
+.btn-elegant {
+  background-color: #00853e;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-elegant:hover {
+  background-color: #006d33;
+}
+
+.quantity-wrapper lightning-input {
+  width: 70px;
+  float: right;
+}

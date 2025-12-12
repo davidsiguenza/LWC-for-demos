@@ -1,0 +1,49 @@
+.loyalty-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.title-text {
+    font-weight: 700;
+    color: #032d60;
+}
+
+.program-name {
+    font-size: 0.85rem;
+    color: #706e6b;
+    margin-top: -4px;
+}
+
+.label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #444;
+}
+
+.value {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #080707;
+}
+
+.tier-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.tier-name {
+    color: #0176D3; /* Brand Blue */
+}
+
+.points-value {
+    color: #00853e; /* Success Green */
+}
+
+.membership-number {
+    font-size: 0.75rem;
+    color: #706e6b;
+    border-top: 1px solid #ecebea;
+    padding-top: 8px;
+}

@@ -1,0 +1,84 @@
+:host {
+    --brand-color: #000000; /* Fallback */
+}
+
+/* 1. Reset Container: Full Width, Transparent */
+.container {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0; /* Remove internal padding */
+    margin: 0;  /* Remove external margins */
+    width: 100%;
+}
+
+/* Title matching Quick Order */
+h2 {
+    font-size: 1.125rem; /* Maybe larger if Quick Order is larger */
+    font-weight: 700;
+    color: #444; /* Or match brand specific if known */
+    text-transform: none; /* Quick Order title isn't uppercase usually, but let's check */
+    margin-bottom: 0.5rem;
+}
+
+/* User asked for "Quick Order" style title. Previous component used #00853e. 
+   Let's try to match that heavy font. */
+.slds-text-heading_medium {
+    font-family: var(--lwc-fontFamily, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol');
+    font-weight: 800;
+    color: #032d60; /* Often Quick Order is dark blue or green. Usage #032d60 (Salesforce dark blue) or #00853e (Green) */
+    font-size: 1.5rem; /* Make it bigger */
+    letter-spacing: -0.025em;
+}
+
+/* 2. Custom Button Style */
+.custom-button {
+    --slds-c-button-brand-background: #0176D3; /* Standard Salesforce Blue or Brand Color */
+    --slds-c-button-brand-color-border: #0176D3;
+    --slds-c-button-text-color: #ffffff;
+}
+
+/* 3. Product Info Styling (Stacked) */
+.product-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-name {
+    font-size: 0.9rem;
+    color: #080707;
+    margin-bottom: 2px;
+}
+
+.product-sku {
+    font-size: 0.75rem;
+    color: #706e6b; /* Neutral text weak color */
+}
+
+/* 4. Table Adjustments */
+.table-responsive {
+    overflow-x: auto;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.slds-table {
+    background-color: transparent !important; /* Ensure table background matches */
+}
+
+/* Remove default table borders if desired for cleaner look, or keep them lightweight */
+.slds-table th {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: #444;
+    background-color: transparent !important; /* Remove grey background */
+    border-bottom: 2px solid #e5e5e5; /* Stronger bottom border */
+    padding-left: 0; /* Align left */
+}
+
+/* Align first cell content to match header */
+.slds-table td {
+    padding-left: 0;
+}

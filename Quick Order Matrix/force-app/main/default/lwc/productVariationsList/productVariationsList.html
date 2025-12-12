@@ -1,0 +1,143 @@
+<template>
+    <div class="elegant-card">
+        
+        <div class="header-container">
+            <lightning-icon icon-name="standard:choice" size="x-small" class="slds-m-right_small"></lightning-icon>
+            <span class="title-text">Variant Selection</span>
+        </div>
+
+        <div class="slds-is-relative">
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading..." size="small" variant="brand"></lightning-spinner>
+            </template>
+
+            <!-- MATRIX VIEW -->
+            <template if:true={isMatrix}>
+                <div class="slds-scrollable_x">
+                    <table class="elegant-table matrix-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="corner-cell">{columnHeader}</th>
+                                <template for:each={matrixColumns} for:item="colHeader">
+                                    <th key={colHeader} scope="col" class="matrix-header">{colHeader}</th>
+                                </template>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={matrixRows} for:item="row">
+                                <tr key={row.label}>
+                                    <td class="matrix-row-label"><strong>{row.label}</strong></td>
+                                    
+                                    <template for:each={row.cells} for:item="cell">
+                                        <td key={cell.key} class="matrix-cell">
+                                            <template if:true={cell.exists}>
+                                                <div class="matrix-input-wrapper">
+                                                    <lightning-input 
+                                                        type="number" 
+                                                        variant="label-hidden" 
+                                                        min="0" 
+                                                        max="999999"
+                                                        placeholder="0"
+                                                        data-id={cell.productId} 
+                                                        onchange={handleQuantityChange}
+                                                        class="matrix-input">
+                                                    </lightning-input>
+                                                    <div class="sku-hint">{cell.sku}</div>
+                                                </div>
+                                            </template>
+                                            <template if:false={cell.exists}>
+                                                <div class="empty-cell">-</div>
+                                            </template>
+                                        </td>
+                                    </template>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+                
+                 <div class="footer-action">
+                    <button class="btn-elegant" onclick={handleAddToCart}>
+                        <lightning-icon icon-name="utility:cart" size="xx-small"></lightning-icon>
+                        Add to Cart
+                    </button>
+                </div>
+            </template>
+
+            <!-- LIST VIEW (Original logic, slightly wrapped) -->
+            <template if:false={isMatrix}>
+                <template if:true={hasVariations}>
+                    <table class="elegant-table">
+                       <!-- Original table content -->
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width: auto;">{columnHeader}</th>
+                                <th scope="col" style="width: 160px;">SKU</th>
+                                <th scope="col" style="width: 90px; text-align: right;">Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={variations} for:item="row">
+                                <tr key={row.uniqueKey} class={row.rowClass}>
+                                    <td data-label={columnHeader}>
+                                        <div class="slds-truncate">
+                                            
+                                            <!-- Iterate structured attributes -->
+                                            <template for:each={row.attributeItems} for:item="attr">
+                                                <div key={attr.label} class="attribute-pill">
+                                                    <span class="attr-label">{attr.label}:</span>
+                                                    <span class="attr-value">{attr.value}</span>
+                                                </div>
+                                            </template>
+
+                                            <template if:true={row.isCurrent}>
+                                                <span class="current-badge">Current</span>
+                                            </template>
+                                        </div>
+                                    </td>
+                                    <td data-label="SKU">
+                                        <div class="slds-text-color_weak slds-text-body_small">{row.productSku}</div>
+                                    </td>
+                                    <td data-label="Quantity">
+                                        <div class="quantity-wrapper">
+                                            <lightning-input 
+                                                type="number" 
+                                                variant="label-hidden" 
+                                                min="0" 
+                                                max="999999"
+                                                placeholder="0"
+                                                data-id={row.realProductId} 
+                                                onchange={handleQuantityChange}>
+                                            </lightning-input>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+
+                    <div class="footer-action">
+                        <button class="btn-elegant" onclick={handleAddToCart}>
+                            <lightning-icon icon-name="utility:cart" size="xx-small"></lightning-icon>
+                            Add to Cart
+                        </button>
+                    </div>
+                </template>
+            </template>
+
+            <template if:false={isMatrix}>
+                <template if:false={hasVariations}>
+                 <div class="slds-p-around_medium slds-text-align_center slds-text-body_small">
+                    <p class="slds-text-color_weak">No other variations available.</p>
+                </div>
+            </template>
+            </template>
+
+            <template if:true={error}>
+                <div class="slds-p-around_small slds-text-color_error slds-text-align_center slds-text-body_small">
+                    {error}
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

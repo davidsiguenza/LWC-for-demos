@@ -4,7 +4,7 @@ public class CartSwitcherController {
     public static List<CartWrapper> getCarts(String communityId, String effectiveAccountId) {
         String webstoreId = resolveCommunityIdToWebstoreId(communityId);
         
-        List<WebCart> carts = [SELECT Id, Name, Order_Type__c, OwnerId, isSecondary, Old_Owner__c, Shared__c
+        List<WebCart> carts = [SELECT Id, Name, Order_Type__c, OwnerId, isSecondary, SDO_SCOM_Old_Owner__c, SDO_SCOM_Shared__c
                                FROM WebCart 
                                WHERE AccountId = :effectiveAccountId AND (Status = 'Active' OR Status = 'Checkout') AND WebStoreId = :webstoreId];
 
@@ -26,14 +26,14 @@ public class CartSwitcherController {
               cw.ownedByCurrentUser = false;
             }
 
-            if (cart.Old_Owner__c != null) {
+            if (cart.SDO_SCOM_Old_Owner__c != null) {
               cw.ownershipTaken = true;
             } else {
               cw.ownershipTaken = false;
             }
             
 
-            cw.isShared = cart.Shared__c;
+            cw.isShared = cart.SDO_SCOM_Shared__c;
             cartWrappers.add(cw);
         }
         return cartWrappers;
@@ -74,10 +74,10 @@ public class CartSwitcherController {
         update carts;
         
         //set the ownership to the new user
-        WebCart wc = [SELECT Id, isSecondary, OwnerId, Old_Owner__c 
+        WebCart wc = [SELECT Id, isSecondary, OwnerId, SDO_SCOM_Old_Owner__c 
           FROM WebCart WHERE Id = :cartId][0];
         String oldOwner = wc.OwnerId;
-        wc.Old_Owner__c = oldOwner;
+        wc.SDO_SCOM_Old_Owner__c = oldOwner;
         wc.OwnerId = UserInfo.getUserId();
         update wc;
 
@@ -100,21 +100,21 @@ public class CartSwitcherController {
     @AuraEnabled(cacheable=false)
     public static void shareCart(String communityId, String effectiveAccountId, String cartId) {
         //set the cart as shared, the sharing rules will be created in the trigger
-        WebCart cart = [SELECT Id, Shared__c FROM WebCart WHERE Id = :cartId][0];
-        cart.Shared__c = true;
+        WebCart cart = [SELECT Id, SDO_SCOM_Shared__c FROM WebCart WHERE Id = :cartId][0];
+        cart.SDO_SCOM_Shared__c = true;
         update cart;
     }
 
     @AuraEnabled(cacheable=false)
     public static void releaseOwnership(String communityId, String effectiveAccountId, String cartId) {        
         //set the ownership to the new user and make the card secondary
-        WebCart wc = [SELECT Id, isSecondary, OwnerId, Old_Owner__c, Shared__c 
+        WebCart wc = [SELECT Id, isSecondary, OwnerId, SDO_SCOM_Old_Owner__c, SDO_SCOM_Shared__c 
           FROM WebCart WHERE Id = :cartId][0];
         String currentOwner = wc.OwnerId;
-        wc.OwnerId = wc.Old_Owner__c;
-        wc.Old_Owner__c = null;
+        wc.OwnerId = wc.SDO_SCOM_Old_Owner__c;
+        wc.SDO_SCOM_Old_Owner__c = null;
         wc.isSecondary = true;
-        wc.Shared__c = false;
+        wc.SDO_SCOM_Shared__c = false;
         update wc;
 
         //adding a sharing rule to keep visibility on the cart for the current user

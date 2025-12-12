@@ -1,0 +1,49 @@
+<template>
+    <div class="slds-card slds-var-p-around_medium loyalty-container">
+        <template lwc:if={isLoading}>
+             <lightning-spinner alternative-text="Loading..." size="medium"></lightning-spinner>
+        </template>
+
+        <template lwc:if={loyaltyData}>
+            <div class="header">
+                <h2 class="slds-text-heading_medium title-text">My Rewards</h2>
+                <div class="program-name">{loyaltyData.programName}</div>
+            </div>
+
+            <div class="content slds-grid slds-gutters slds-wrap slds-m-top_medium">
+                <div class="slds-col slds-size_1-of-2">
+                    <div class="label">Current Tier</div>
+                    <div class="value tier-wrapper">
+                         <lightning-icon icon-name="custom:custom1" size="small" class="slds-m-right_x-small"></lightning-icon>
+                         <span class="tier-name">{loyaltyData.tierName}</span>
+                    </div>
+                </div>
+
+                <div class="slds-col slds-size_1-of-2">
+                    <div class="label slds-text-align_right">Available Points</div>
+                    <div class="value points-value slds-text-align_right">
+                        {loyaltyData.pointsBalance}
+                    </div>
+                </div>
+            </div>
+            
+             <div class="slds-m-top_medium">
+                <p class="membership-number">Member ID: {loyaltyData.membershipNumber}</p>
+            </div>
+        </template>
+
+        <template lwc:if={isEmpty}>
+             <div class="slds-text-color_weak slds-text-align_center">
+                Join our loyalty program to start earning points!
+            </div>
+        </template>
+
+        <template lwc:if={error}>
+             <div class="slds-text-color_error slds-text-align_center slds-p-top_small">
+                <lightning-icon icon-name="utility:error" size="small" variant="error" class="slds-m-bottom_xx-small"></lightning-icon>
+                <p>Loyalty information unavailable.</p>
+                <p class="slds-text-body_small slds-p-top_x-small">{errorMessage}</p>
+            </div>
+        </template>
+    </div>
+</template>
