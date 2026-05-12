@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "icons": [
+    { "key": "phone", "label": "Phone", "file": "phone.svg" },
+    { "key": "whatsapp", "label": "WhatsApp", "file": "whatsapp.svg" },
+    { "key": "email", "label": "Email", "file": "email.svg" },
+    { "key": "heart", "label": "Heart", "file": "heart.svg" },
+    { "key": "star", "label": "Star", "file": "star.svg" },
+    { "key": "check", "label": "Check", "file": "check.svg" }
+  ]
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Customization__c</fullName>
+    <description>JSON payload with the product personalization (text, font, color, iconKey, positions). Populated by the Product Personalizer LWC on add to cart.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>JSON with the buyer-authored personalization for this line item.</inlineHelpText>
+    <label>Customization</label>
+    <length>32768</length>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>5</visibleLines>
+</CustomField>

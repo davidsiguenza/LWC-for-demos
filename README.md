@@ -103,6 +103,7 @@ This collection currently contains
 * [Forced Account Switch](https://github.com/DaniSpain/Salesforce-Commerce-on-Core/tree/main/forcedAccountSwitch) A mix of components that allows to force an Effective Account Id passing that as an URL param (e.g. from a OOBO scenario from a partner community)
 * [Barcode Scanner](https://github.com/DaniSpain/Salesforce-Commerce-on-Core/tree/main/lwrBarcodeScanner) A component that opens the device camera and scans for multiple barcodes for broducts to be added to the cart. This component require Mobile Publisher licenses to work
 * [LWR Generic Related Component](https://github.com/DaniSpain/Salesforce-Commerce-on-Core/tree/main/lwrGenericRelated) A component that can be used in LWR websites to show any kind of related object in a catalog-like format
+* [Product Personalizer](./Product%20Personalizer) A PDP component that lets shoppers personalize a product by adding custom text and an icon overlay on top of the product image. Uses Fabric.js for an interactive canvas (drag, rotate, resize) and persists the design as JSON on `CartItem.Customization__c`. Includes Apex controller, static resources, permission set, and custom fields.
 
 ## Additional Resources
 If you are looking for all the base components or official examples and guidelines used in Salesforce B2B/D2C Commerce you can refer to this repositories provided by Salesforce:

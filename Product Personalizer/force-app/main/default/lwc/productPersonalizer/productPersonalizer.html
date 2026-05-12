@@ -1,0 +1,174 @@
+<template>
+    <template lwc:if={isCustomizable}>
+        <button
+            type="button"
+            class="pp-trigger"
+            style={buttonStyle}
+            onclick={handleOpen}
+        >
+            {buttonLabel}
+        </button>
+
+        <template lwc:if={isModalOpen}>
+            <div class="pp-overlay" onclick={handleClose}>
+                <div
+                    class="pp-modal"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="pp-title"
+                    onclick={stopPropagation}
+                >
+                    <header class="pp-modal__header">
+                        <h2 id="pp-title" class="pp-modal__title">
+                            Personaliza tu {productInfo.name}
+                        </h2>
+                        <button
+                            type="button"
+                            class="pp-modal__close"
+                            aria-label="Cerrar"
+                            onclick={handleClose}
+                        >
+                            &times;
+                        </button>
+                    </header>
+
+                    <div class="pp-tabs" role="tablist">
+                        <button
+                            type="button"
+                            role="tab"
+                            class={textTabClass}
+                            aria-selected={isTextTab}
+                            onclick={handleTextTab}
+                        >
+                            TEXTO
+                        </button>
+                        <button
+                            type="button"
+                            role="tab"
+                            class={iconTabClass}
+                            aria-selected={isIconTab}
+                            onclick={handleIconTab}
+                        >
+                            ICONO
+                        </button>
+                    </div>
+
+                    <section class="pp-modal__body">
+                        <div class="pp-preview">
+                            <canvas
+                                class="pp-canvas"
+                                width="480"
+                                height="480"
+                            ></canvas>
+                        </div>
+
+                        <template lwc:if={isTextTab}>
+                            <div class="pp-controls">
+                                <label class="pp-label" for="pp-text-input">
+                                    Tu texto
+                                </label>
+                                <input
+                                    id="pp-text-input"
+                                    class="pp-input"
+                                    type="text"
+                                    maxlength="40"
+                                    placeholder="Ej. DR RECASENS"
+                                    value={text}
+                                    oninput={handleTextChange}
+                                />
+                                <div class="pp-hint">
+                                    <span>{remainingChars} caracteres restantes</span>
+                                    <span class="pp-hint__warn">
+                                        Evita tipografías pequeñas y delgadas — máx. 2 líneas
+                                    </span>
+                                </div>
+
+                                <label class="pp-label">Tipografía</label>
+                                <div class="pp-chip-group">
+                                    <template for:each={fontOptions} for:item="font">
+                                        <button
+                                            key={font.value}
+                                            type="button"
+                                            class={font.class}
+                                            data-value={font.value}
+                                            onclick={handleFontChange}
+                                        >
+                                            {font.label}
+                                        </button>
+                                    </template>
+                                </div>
+
+                                <label class="pp-label">Color</label>
+                                <div class="pp-swatch-group">
+                                    <template for:each={colorOptions} for:item="color">
+                                        <button
+                                            key={color.value}
+                                            type="button"
+                                            class={color.class}
+                                            style={color.style}
+                                            data-value={color.value}
+                                            title={color.label}
+                                            aria-label={color.label}
+                                            onclick={handleColorChange}
+                                        ></button>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+
+                        <template lwc:if={isIconTab}>
+                            <div class="pp-controls">
+                                <label class="pp-label">Elige un icono</label>
+                                <div class="pp-icon-grid">
+                                    <template for:each={iconOptions} for:item="icon">
+                                        <button
+                                            key={icon.key}
+                                            type="button"
+                                            class={icon.class}
+                                            data-key={icon.key}
+                                            title={icon.label}
+                                            aria-label={icon.label}
+                                            onclick={handleIconSelect}
+                                        >
+                                            <img src={icon.url} alt={icon.label} />
+                                        </button>
+                                    </template>
+                                </div>
+                                <p class="pp-hint">
+                                    Haz clic en un icono para añadirlo. Haz clic de nuevo para quitarlo.
+                                </p>
+                            </div>
+                        </template>
+                    </section>
+
+                    <footer class="pp-modal__footer">
+                        <button
+                            type="button"
+                            class="pp-btn pp-btn--ghost"
+                            onclick={handleClearDesign}
+                        >
+                            Borrar diseño
+                        </button>
+                        <div class="pp-footer-spacer"></div>
+                        <button
+                            type="button"
+                            class="pp-btn pp-btn--ghost"
+                            onclick={handleClose}
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="button"
+                            class="pp-btn pp-btn--primary"
+                            style={buttonStyle}
+                            disabled={canAddToCartDisabled}
+                            onclick={handleAddToCart}
+                        >
+                            {addToCartLabel}
+                        </button>
+                    </footer>
+                </div>
+            </div>
+        </template>
+    </template>
+</template>

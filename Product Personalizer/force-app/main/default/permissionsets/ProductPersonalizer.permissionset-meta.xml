@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Grants FLS on the Product Personalizer fields (Product2.IsCustomizable__c and CartItem.Customization__c). Assign to Buyer Users and internal users that need to read/edit personalization data.</description>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Product2.IsCustomizable__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CartItem.Customization__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Product2.Image_URL__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <classAccesses>
+        <apexClass>ProductPersonalizerController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Product Personalizer</label>
+</PermissionSet>
