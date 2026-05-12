@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RedemptionRatio__c</fullName>
+    <description>Points required per monetary unit of discount (e.g. 10 = 10 points buys 1 EUR off). Used by the checkout redemption LWC.</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Redemption Ratio (points per unit)</label>
+    <precision>10</precision>
+    <required>false</required>
+    <scale>4</scale>
+    <type>Number</type>
+</CustomField>

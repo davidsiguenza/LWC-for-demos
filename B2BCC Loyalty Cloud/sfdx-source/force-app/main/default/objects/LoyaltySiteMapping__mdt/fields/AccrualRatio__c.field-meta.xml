@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AccrualRatio__c</fullName>
+    <description>Points awarded per monetary unit (e.g. 1.0 = 1 point per EUR). Read by the accrual Flow; not used by My Account widgets.</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Accrual Ratio (points per unit)</label>
+    <precision>10</precision>
+    <required>false</required>
+    <scale>4</scale>
+    <type>Number</type>
+</CustomField>

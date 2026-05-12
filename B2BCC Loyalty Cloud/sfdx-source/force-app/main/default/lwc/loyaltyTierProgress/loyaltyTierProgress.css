@@ -1,0 +1,58 @@
+.tier-stepper {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin: 1rem 0 0.5rem 0;
+}
+
+.tier-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 0 auto;
+    min-width: 4rem;
+    text-align: center;
+}
+
+.tier-step p {
+    margin: 0.1rem 0;
+}
+
+.tier-marker {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+    background: #C0C0C0;
+    transition: transform 0.2s ease;
+}
+
+.tier-marker.is-current {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.15);
+}
+
+.tier-marker.is-locked {
+    opacity: 0.45;
+    background: #8B8B8B;
+}
+
+.tier-connector {
+    flex: 1 1 auto;
+    height: 4px;
+    background: #E5E5E5;
+    border-radius: 2px;
+    margin: 1.05rem 0.35rem 0 0.35rem;
+    position: relative;
+    overflow: hidden;
+    align-self: flex-start;
+}
+
+.tier-connector-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2E844A 0%, #04844B 100%);
+    transition: width 0.4s ease;
+}

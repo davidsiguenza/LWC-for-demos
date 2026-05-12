@@ -1,0 +1,19 @@
+# Salesforce
+.sfdx/
+.sf/
+.localdevserver/
+.vscode/
+*.log
+deploy-options.json
+
+# Retrieved bundles (noise)
+experience-retrieved/
+unpackaged/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+*.swp
+.idea/

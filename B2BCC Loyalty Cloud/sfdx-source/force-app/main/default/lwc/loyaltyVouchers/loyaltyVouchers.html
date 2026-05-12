@@ -1,0 +1,40 @@
+<template>
+    <lightning-card title="My Vouchers" icon-name="standard:coupon_codes">
+        <template lwc:if={loading}>
+            <div class="slds-p-around_medium">
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template lwc:elseif={hasError}>
+            <div class="slds-p-around_medium slds-text-color_error">{errorMessage}</div>
+        </template>
+
+        <template lwc:elseif={hasVouchers}>
+            <ul class="slds-has-dividers_bottom-space">
+                <template for:each={vouchers} for:item="v">
+                    <li key={v.id} class="slds-item slds-p-around_small">
+                        <div class="slds-grid slds-grid_align-spread">
+                            <div>
+                                <p class="slds-text-heading_small">{v.voucherCode}</p>
+                                <p class="slds-text-body_small slds-text-color_weak">{v.name}</p>
+                            </div>
+                            <div class="slds-text-align_right">
+                                <p class="slds-text-heading_small">{v.displayValue}</p>
+                                <p class="slds-text-body_small slds-text-color_weak">
+                                    Expires {v.formattedExpiration}
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                </template>
+            </ul>
+        </template>
+
+        <template lwc:else>
+            <div class="slds-p-around_medium slds-text-color_weak">
+                No active vouchers.
+            </div>
+        </template>
+    </lightning-card>
+</template>

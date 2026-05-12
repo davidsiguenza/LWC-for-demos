@@ -1,0 +1,15 @@
+{
+  "records": [
+    {
+      "attributes": {
+        "type": "LoyaltyProgram",
+        "referenceId": "LoyaltyProgramRef1"
+      },
+      "Name": "B2B Commerce Rewards",
+      "Status": "Active",
+      "Type": "LOYALTY_PROGRAM",
+      "IsPrimary": false,
+      "Description": "Reusable loyalty program for B2B Commerce on Core demos. Seed data only — replace with real program config for production."
+    }
+  ]
+}

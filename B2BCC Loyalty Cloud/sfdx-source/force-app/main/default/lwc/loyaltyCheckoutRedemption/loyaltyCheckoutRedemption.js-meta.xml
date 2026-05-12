@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Loyalty — Checkout Redemption</masterLabel>
+    <description>Lets a buyer redeem loyalty points as a cart discount during checkout.</description>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="webStoreId" type="String" label="WebStore Id" description="Used to resolve the LoyaltyProgram. Leave blank to use the org's primary program." />
+            <property name="cartIdOverride" type="String" label="Cart Id (override)" description="Optional. When placed on the Checkout page the cart is auto-detected from the page context; only set this for testing on a non-checkout page." />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>
