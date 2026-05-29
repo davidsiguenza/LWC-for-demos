@@ -135,7 +135,9 @@ sf project deploy start --source-dir force-app/main/default/lwc --target-org <al
 sf project deploy start --source-dir force-app/main/default/permissionsets --target-org <alias> --wait 10
 ```
 
-> **Known issue**: deploying CMDT **records** (`force-app/main/default/customMetadata/`) via SOAP often hangs indefinitely on SDOs. Skip this and create the record in Phase E via Apex anonymous or Setup UI. `LoyaltyAccountController` falls back to `LoyaltyProgram WHERE IsPrimary = true` when the mapping record is missing, so the demo keeps working without it.
+> **Known issue — CMDT records via SOAP**: deploying `force-app/main/default/customMetadata/` via SOAP on SDOs fails with `UNKNOWN_EXCEPTION` (not a hang — it returns immediately with `numberComponentsTotal: 0`). Skip this step entirely and create the record in Phase E via Apex anonymous or Setup UI. `LoyaltyAccountController` falls back to `LoyaltyProgram WHERE IsPrimary = true` when the mapping record is missing, so the demo keeps working without it.
+
+> **Known issue — source tracking conflicts when deploying from the package directory**: running `sf project deploy start --source-dir ...` from `B2BCCLoyaltyCloud/sfdx-source/` fails with `UNKNOWN_EXCEPTION` on classes/triggers if the target org already has components tracked under a different project (e.g. the org was previously used by another SFDX project). The root cause is the source-tracking DB disagreeing with org state. **Reliable fix**: copy the relevant `force-app/main/default/` subdirs into the target project's own `force-app` directory and run all `sf project deploy` commands from there instead.
 
 > **Permset license**: `B2BLoyalty_Buyer.permissionset-meta.xml` is currently keyed to `Customer Community Plus`. If your target org uses a different buyer license (e.g. Partner Community), **delete and recreate** the permset with the correct license — `license` is not editable post-deploy. Delete by `sf data delete record --sobject PermissionSet --record-id <id>` then re-deploy.
 
@@ -158,7 +160,7 @@ Create one `LoyaltySiteMapping__mdt` record linking the WebStore to the LoyaltyP
     ```apex
     Metadata.CustomMetadata cmd = new Metadata.CustomMetadata();
     cmd.fullName = 'LoyaltySiteMapping__mdt.SDO_B2B';
-    cmd.label = 'SDO B2B Store → <Program>';
+    cmd.label = 'SDO B2B Loyalty';  // ⚠️ max 40 chars — "SDO B2B Store → <Program>" is too long!
 
     for (Map<String, Object> f : new List<Map<String, Object>>{
         new Map<String, Object>{ 'field' => 'WebStoreId__c', 'value' => '<WebStoreId>' },
@@ -198,32 +200,152 @@ sf apex run --file scripts/postinstall.apex --target-org <alias>
 
 Expect `Enrolled new members: N` + `Assigned B2BLoyalty_Buyer to users: N` in the debug log.
 
+> **Critical — don't skip this phase**: without `B2BLoyalty_Buyer` the buyer user has no access to the Apex classes (`LoyaltyAccountController`, `LoyaltyRedemptionController`) or to the Loyalty objects (LoyaltyProgramMember, LoyaltyMemberCurrency, LoyaltyTier, TransactionJournal, Voucher). The LWCs will render with the "Could not load loyalty data" error message or silently show "You are not enrolled" — which is identical to a missing member and hard to debug. **Always check this first when the widgets show no data.**
+
+> **Individual assignment** (when postinstall.apex was not run or missed a user): run directly from Developer Console or sf apex run:
+> ```apex
+> Id userId = '<buyerUserId>';  // User.Id of the specific buyer
+> PermissionSet ps = [SELECT Id FROM PermissionSet WHERE Name = 'B2BLoyalty_Buyer' LIMIT 1];
+> insert new PermissionSetAssignment(AssigneeId = userId, PermissionSetId = ps.Id);
+> ```
+> If you get `DUPLICATE_VALUE`, the permset is already assigned — that's fine.
+
 ## Phase G — Enrol buyers into the LoyaltyProgram
 
 Same `scripts/postinstall.apex` (Phase F) handles this — it creates `LoyaltyProgramMember` rows for every BuyerGroup member that isn't enrolled yet. Uses `AccountId` binding.
 
 > **B2B vs Cirrus seed convention**: the Cirrus demo pack enrols members by `ContactId` (see Lauren Bailey, `0lMg80000001q6DEAQ`). `LoyaltyAccountController` queries `WHERE AccountId = :accountId OR ContactId = :contactId`, so both conventions coexist. If you re-enrol manually, prefer `AccountId` for new B2B demos.
 
-## Phase H — Storefront wiring (Experience Builder, manual)
+## Phase H — Storefront wiring
 
-The current implementation does **not** deploy `DigitalExperienceBundle` changes (template retrieval on SDOs is unreliable). Instead, walk through Experience Builder:
+Two approaches — **metadata** (faster, repeatable) or **Experience Builder** (visual). Use metadata when you already have the site's `DigitalExperience` project locally; use Experience Builder when you don't.
+
+### Option A — Metadata deploy (recommended for existing SFDX projects)
+
+This is reliable when the site workspace is already in your project. Validated on `SDO_B2B_Commerce_Enhanced1`.
+
+**H.1 — Create route**
+
+`force-app/main/default/digitalExperiences/site/<SiteName>/sfdc_cms__route/MyLoyalty__c/_meta.json`:
+```json
+{ "apiName": "MyLoyalty__c", "type": "sfdc_cms__route", "path": "routes" }
+```
+
+`force-app/main/default/digitalExperiences/site/<SiteName>/sfdc_cms__route/MyLoyalty__c/content.json`:
+```json
+{
+  "type": "sfdc_cms__route",
+  "title": "My Loyalty",
+  "contentBody": {
+    "activeViewId": "myLoyalty",
+    "configurationTags": [],
+    "pageAccess": "UseParent",
+    "routeType": "custom-my-loyalty",
+    "urlPrefix": "my-loyalty"
+  },
+  "urlName": "my-loyalty"
+}
+```
+
+> ⚠️ Custom routes **must** use the `__c` suffix on the folder/apiName and `custom-<name>` on `routeType`. Not obvious, causes a deploy error otherwise.
+
+**H.2 — Create view**
+
+`force-app/main/default/digitalExperiences/site/<SiteName>/sfdc_cms__view/myLoyalty/_meta.json`:
+```json
+{ "apiName": "myLoyalty", "type": "sfdc_cms__view", "path": "views" }
+```
+
+`force-app/main/default/digitalExperiences/site/<SiteName>/sfdc_cms__view/myLoyalty/content.json`:
+```json
+{
+  "type": "sfdc_cms__view",
+  "title": "My Loyalty",
+  "contentBody": {
+    "component": {
+      "children": [
+        { "children": [ /* title section — clone from myProfile */ ], ... },
+        {
+          "attributes": { "sectionConfig": "{\"UUID\":\"...\",\"columns\":[{\"columnWidth\":\"2\",...},{\"columnWidth\":\"10\",...}]}" },
+          "children": [
+            { "children": [
+              { "definition": "commerce_builder:navigationMenuItemList", "attributes": { "navigationLinkSetDevName": "B2B_My_Account_Menu" } }
+            ] },
+            { "children": [
+              { "definition": "c:loyaltyBalanceCard",        "attributes": { "webStoreId": "<WebStoreId>" } },
+              { "definition": "c:loyaltyTierProgress",       "attributes": { "webStoreId": "<WebStoreId>" } },
+              { "definition": "c:loyaltyVouchers",           "attributes": { "webStoreId": "<WebStoreId>" } },
+              { "definition": "c:loyaltyTransactionHistory", "attributes": { "webStoreId": "<WebStoreId>" } }
+            ] }
+          ],
+          "definition": "community_layout:section"
+        }
+      ],
+      "definition": "community_layout:sldsFlexibleLayout"
+    },
+    "dataProviders": [],
+    "themeLayoutType": "Inner",
+    "viewType": "custom-my-loyalty"
+  },
+  "urlName": "my-loyalty"
+}
+```
+
+> ⚠️ **`webStoreId` is required on each LWC attribute.** Without it `@wire getMemberSummary(webStoreId)` is called with `undefined`, the wire adapter never fires, and the components render the "not enrolled" empty state — which looks identical to a permission error. Set `webStoreId` explicitly on every loyalty LWC.
+
+**H.3 — Add menu item**
+
+In `navigationMenus/<SiteName>_My_Account_Menu.navigationMenu-meta.xml` (check the exact filename with `sf data query -q "SELECT DeveloperName FROM NavigationMenu WHERE Label = 'B2B My Account Menu'"` and look for the matching file):
+```xml
+<navigationMenuItem>
+    <label>Loyalty</label>
+    <position>10</position>
+    <publiclyAvailable>false</publiclyAvailable>
+    <target>/my-loyalty</target>
+    <type>InternalLink</type>
+</navigationMenuItem>
+```
+
+**H.4 — Deploy in order**
+
+```bash
+# 1. Route + view FIRST (nav menu references the URL — can't deploy nav menu before route exists)
+sf project deploy start \
+  --source-dir force-app/main/default/digitalExperiences/site/<SiteName>/sfdc_cms__route/MyLoyalty__c \
+  --source-dir force-app/main/default/digitalExperiences/site/<SiteName>/sfdc_cms__view/myLoyalty \
+  --target-org <alias> --ignore-conflicts
+
+# 2. Then nav menu
+sf project deploy start \
+  --source-dir force-app/main/default/navigationMenus/B2B_My_Account_Menu.navigationMenu-meta.xml \
+  --target-org <alias>
+
+# 3. Publish
+sf community publish --name "<SiteName>" --target-org <alias>
+```
+
+> ⚠️ Deploying the nav menu before the route is created causes `No page found in site for URL path /my-loyalty`. Always deploy route+view first, nav menu second.
+
+---
+
+### Option B — Experience Builder (visual, no SFDX project needed)
 
 1. Open Experience Builder for the target site (e.g. `SDO - B2B Commerce Enhanced`).
-2. **New page** "Loyalty":
+2. **New page** "My Loyalty":
    - Clone from My Profile (keeps the sidebar navigation intact).
-   - URL slug: `loyalty`.
+   - URL slug: `my-loyalty`.
    - In the right column, drop the 4 LWCs top-to-bottom:
      - `Loyalty — Balance`
      - `Loyalty — Tier Progress`
      - `Loyalty — Vouchers`
      - `Loyalty — Transaction History`
-   - For each LWC, leave `WebStore Id` blank (Apex uses fallback) or set it to `<WebStoreId>` for a hard binding.
+   - For each LWC, set the **WebStore Id** property in the property panel to `<WebStoreId>`. ⚠️ Do not leave it blank — see Option A warning above.
 3. **Add menu item** to `B2B My Account Menu`:
    - Edit the Navigation List Menu on My Profile.
    - Add Menu Item → Name `Loyalty`, Type `Site Page`, Page = the one you just created.
    - Save menu.
 4. **Cart page** — drop `Loyalty — Checkout Redemption` into the Cart page (`/cart`), sidebar, above Coupon Codes. Do NOT place it on the Checkout page itself — the Commerce LWR checkout uses its own extension model and breaks with generic LWCs (status 404 on `cart_view`).
-5. **Publish** the site. Without Publish the LWCs don't reach the runtime bundle.
+5. **Publish** the site.
 
 Known behaviour: after clicking "Apply points" in the checkout redemption widget, `window.location.reload()` fires so the stock Cart Summary re-fetches. This is because `commerce/cartApi` module is not available via static import in custom LWCs and dynamic imports are blocked by the LWC compiler.
 
@@ -331,7 +453,7 @@ B2BCCLoyaltyCloud/
 
 | # | Gotcha | Why | How to recover |
 |---|---|---|---|
-| 1 | CMDT records hang during SOAP deploy | Known SDO quirk | Create the record via Apex anonymous (see Phase E) or Setup UI |
+| 1 | CMDT records fail during SOAP deploy with `UNKNOWN_EXCEPTION` | SDO quirk — `numberComponentsTotal: 0`, no useful error | Create via Apex anonymous (Phase E) or Setup UI |
 | 2 | Permset license not editable | Salesforce platform rule | Delete + redeploy; or ship multiple permsets keyed to each license |
 | 3 | `recordId` is null on Cart page | Commerce LWR doesn't populate it | Apex auto-discovers via `resolveActiveCartId` (Status IN Active/Checkout + OwnerId = running user) |
 | 4 | `@wire` with `$cartId` never fires | LWR strict with undefined reactive params | Use imperative call from `connectedCallback` |
@@ -339,6 +461,12 @@ B2BCCLoyaltyCloud/
 | 6 | `CartItem*PriceAdjustment` doesn't recalc cart totals | Commerce pricing engine only fires on specific actions | Patch `CartItem` aggregate fields ourselves; `WebCart.TotalAmount` stays stale until real pricing action |
 | 7 | `LoyaltyMemberCurrency.PointsBalance` is read-only | Salesforce platform rule | Use display-time delta (demo) or configure `LoyaltyProgramProcess` (prod) |
 | 8 | `Order.ContactId` doesn't exist | Release-dependent | Use `BillToContactId` + `ShipToContactId` + fallback to `Contact WHERE AccountId = Order.AccountId` |
+| 9 | LWCs show "not enrolled" or empty — but member exists | `webStoreId` attribute not set on the LWC in the page view | Set `webStoreId` explicitly (Phase H, Option A) or via Experience Builder property panel |
+| 10 | LWCs show error "Apex request is invalid" — but member exists | `B2BLoyalty_Buyer` permset not assigned to the buyer | Assign permset (Phase F individual assignment); confirm with `PermissionSetAssignment` query |
+| 11 | Source tracking conflicts when deploying from `sfdx-source/` dir | SDO org already tracked by a different project in source tracking DB | Copy metadata dirs into the target project's `force-app/` and deploy from there |
+| 12 | CMDT record label max 40 chars | Platform field limit | Keep label ≤ 40 chars: "SDO B2B Commerce Enhanced Loyalty" (33) is fine; "SDO B2B Commerce Enhanced to Cirrus Loyalty" (45) fails |
+| 13 | Nav menu deploy fails with "No page found for URL path" | Nav menu deployed before the route exists | Deploy route+view first, nav menu second (see Phase H.4 order) |
+| 14 | Custom route `__c` suffix missing → "To create custom route, suffix with `__c`" | LWR custom route naming convention | Route folder AND `apiName` in `_meta.json` must end in `__c`; `routeType`/`viewType` must use `custom-<name>` |
 
 ---
 
@@ -362,3 +490,4 @@ B2BCCLoyaltyCloud/
 | 2026-05-05 | Redemption | `LoyaltyRedemptionController` + `loyaltyCheckoutRedemption` LWC. `CartItemPriceAdjustment` prorated across items. Permset extended with Cart + CartItemPriceAdjustment (C/R/U/D). LWC uses imperative Apex call (not `@wire`) + `window.location.reload()` after apply. | Checkout page breaks with LWCs — use Cart page only. `WebCart.TotalAmount` is read-only so Cart Summary shows pre-discount total until Commerce recalcs (cosmetic; order confirmation is correct). |
 | 2026-05-05 | Accrual + balance delta | `LoyaltyOrderJournalService` + `LoyaltyOrderTrigger` on Order activation. Member resolution with Account→Contact fallback. `LoyaltyAccountController` adds SUM of connector journals to seed balance. Documented trade-off in `references/POST_INSTALL_LOYALTY_PROCESS.md`. | `LoyaltyMemberCurrency.PointsBalance` is read-only; Program Process required for native updates. |
 | 2026-05-06 | v1.0.0 stable | SKILL.md rewritten as executable guide reflecting real implementation. Tagged `v1.0.0-stable` in git. | Next: robustness work (TBD with user). |
+| 2026-05-29 | Second org deploy | Deployed into `dentaid` (`storm.0cf5298163cad6`) — SDO B2B Commerce Enhanced, WebStore `0ZEJ6000000lEJdOAM`, Cirrus Loyalty `0lpJ6000000xVzXIAU`. Surfaced 6 new issues (gotchas 9–14). Page built via metadata (Option A in Phase H) instead of Experience Builder. | New issues: (1) CMDT SOAP deploy returns `UNKNOWN_EXCEPTION` immediately (not a hang); (2) source-tracking conflicts when deploying from package dir → copy to project; (3) `webStoreId` attribute mandatory on LWCs; (4) `B2BLoyalty_Buyer` not auto-assigned when postinstall.apex not run; (5) CMDT label 40-char limit; (6) nav-menu-before-route ordering error. All documented in gotchas + phases. |
