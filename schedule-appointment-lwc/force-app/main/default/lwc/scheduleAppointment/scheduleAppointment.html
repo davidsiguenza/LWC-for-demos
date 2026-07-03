@@ -1,0 +1,134 @@
+<template>
+    <div class="schedule-appointment">
+        <div class="action-row">
+            <lightning-button
+                variant="brand"
+                label={buttonLabel}
+                onclick={handleOpenScheduler}
+                class="cta-button"
+            ></lightning-button>
+        </div>
+
+        <template lwc:if={showModal}>
+            <section
+                class="scheduler-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="scheduler-title"
+            >
+                <div class="modal-backdrop" onclick={handleCloseModal}></div>
+                <div class="modal-card">
+                    <header class="modal-header">
+                        <h2 id="scheduler-title" class="modal-title">
+                            <template lwc:if={loginRequired}>Schedule an appointment</template>
+                            <template lwc:else>
+                                <template lwc:if={selectedDate}>Select a time slot</template>
+                                <template lwc:else>Select a date</template>
+                            </template>
+                        </h2>
+                        <lightning-button-icon
+                            icon-name="utility:close"
+                            alternative-text="Close"
+                            onclick={handleCloseModal}
+                            variant="bare"
+                            class="close-btn"
+                        ></lightning-button-icon>
+                    </header>
+
+                    <div class="modal-body">
+                        <template lwc:if={errorMessage}>
+                            <div class="error-banner" role="alert">{errorMessage}</div>
+                        </template>
+                        <template lwc:if={loginRequired}>
+                            <div class="login-required">Please log in to schedule an appointment.</div>
+                        </template>
+
+                        <template lwc:if={showSlotsAndLoggedIn}>
+                            <div class="slots-view">
+                                <button
+                                    class="back-link"
+                                    onclick={handleBackToCalendar}
+                                >← Back to calendar</button>
+                                <p class="slot-date">{selectedDateLabel}</p>
+                                <div class="slots-grid">
+                                    <template for:each={slotOptions} for:item="slot">
+                                        <div
+                                            key={slot.key}
+                                            class={slot.slotClass}
+                                            role="button"
+                                            tabindex="0"
+                                            onclick={handleSelectSlot}
+                                            onkeydown={handleSlotKeydown}
+                                            data-slot-key={slot.key}
+                                            data-slot-label={slot.label}
+                                            data-slot-filled={slot.filled}
+                                            data-slot-booked={slot.booked}
+                                            aria-disabled={slot.filledOrBooked}
+                                            aria-label={slot.ariaLabel}
+                                        >
+                                            <span class="slot-time">{slot.label}</span>
+                                            <template lwc:if={slot.filled}>
+                                                <span class="slot-badge filled">Filled</span>
+                                            </template>
+                                            <template lwc:if={slot.booked}>
+                                                <span class="slot-badge booked">Booked</span>
+                                            </template>
+                                            <template lwc:if={slot.selected}>
+                                                <span class="slot-badge selected">Selected</span>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+
+                        <template lwc:else>
+                            <template lwc:if={showCalendar}>
+                            <div class="calendar-view">
+                                <div class="calendar-nav">
+                                    <lightning-button-icon
+                                        icon-name="utility:chevronleft"
+                                        alternative-text="Previous month"
+                                        onclick={handlePrevMonth}
+                                        variant="bare"
+                                    ></lightning-button-icon>
+                                    <span class="calendar-month">{calendarTitle}</span>
+                                    <lightning-button-icon
+                                        icon-name="utility:chevronright"
+                                        alternative-text="Next month"
+                                        onclick={handleNextMonth}
+                                        variant="bare"
+                                    ></lightning-button-icon>
+                                </div>
+                                <div class="calendar-weekdays">
+                                    <span class="weekday">Sun</span>
+                                    <span class="weekday">Mon</span>
+                                    <span class="weekday">Tue</span>
+                                    <span class="weekday">Wed</span>
+                                    <span class="weekday">Thu</span>
+                                    <span class="weekday">Fri</span>
+                                    <span class="weekday">Sat</span>
+                                </div>
+                                <div class="calendar-days">
+                                    <template for:each={calendarDays} for:item="day">
+                                        <button
+                                            key={day.key}
+                                            class={day.dayClass}
+                                            disabled={day.disabled}
+                                            data-date={day.dateStr}
+                                            onclick={handleSelectDate}
+                                        >
+                                            <template lwc:if={day.padding}></template>
+                                            <template lwc:else>{day.dayNum}</template>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+                            </template>
+                        </template>
+                    </div>
+                </div>
+            </section>
+        </template>
+    </div>
+</template>

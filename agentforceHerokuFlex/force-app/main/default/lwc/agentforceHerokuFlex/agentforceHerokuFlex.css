@@ -1,0 +1,65 @@
+/* Contenedor principal */
+.chat-container {
+    position: relative;
+}
+
+/* Estilos para la burbuja de chat */
+.chat-bubble {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #0070d2; /* Salesforce blue */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 9998;
+    transition: transform 0.2s ease-in-out;
+}
+
+.chat-bubble:hover {
+    transform: scale(1.1);
+}
+
+/* Estilos para la ventana de chat emergente */
+.chat-window {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Para que el iframe no se salga del borde redondeado */
+}
+
+/* Encabezado de la ventana de chat */
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: #f3f3f3; /* Gris claro de Salesforce */
+    border-bottom: 1px solid #dddbda;
+}
+
+.header-title {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.close-button {
+    color: #555;
+}
+
+/* Contenedor del Iframe para que ocupe el espacio restante */
+.iframe-container {
+    flex-grow: 1;
+    height: 100%;
+}

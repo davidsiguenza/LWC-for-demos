@@ -1,0 +1,85 @@
+<template>
+    <div class="loyalty-container slds-p-around_medium">
+        <!-- Loading State -->
+        <template lwc:if={isLoading}>
+            <lightning-spinner alternative-text="Loading loyalty data" size="medium"></lightning-spinner>
+        </template>
+
+        <!-- Error State -->
+        <template lwc:elseif={error}>
+            <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                <span class="slds-assistive-text">error</span>
+                <p>{errorMessage}</p>
+            </div>
+        </template>
+
+        <!-- No Data State -->
+        <template lwc:elseif={loyaltyData}>
+            <!-- Header -->
+            <div class="slds-media slds-media_center slds-m-bottom_medium">
+                <div class="slds-media__figure">
+                    <lightning-icon icon-name="standard:loyalty_program" size="large"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-text-heading_medium title-text">{loyaltyData.programName}</h2>
+                    <p class="slds-text-body_small slds-text-color_weak">{loyaltyData.membershipNumber}</p>
+                </div>
+            </div>
+
+            <!-- Tier + Points -->
+            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                <div class="slds-col slds-size_1-of-2">
+                    <div class="slds-box slds-box_x-small slds-text-align_center">
+                        <p class="slds-text-body_small slds-text-color_weak">Tier</p>
+                        <p class="slds-text-heading_small title-text">{loyaltyData.tierName}</p>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <div class="slds-box slds-box_x-small slds-text-align_center">
+                        <p class="slds-text-body_small slds-text-color_weak">{loyaltyData.currencyName}</p>
+                        <p class="slds-text-heading_small title-text">{loyaltyData.pointsBalance}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefits -->
+            <template lwc:if={hasBenefits}>
+                <lightning-accordion class="slds-m-bottom_medium" allow-multiple-sections-open>
+                    <lightning-accordion-section name="benefits" label="Benefits">
+                        <ul class="slds-list_dotted">
+                            <template for:each={loyaltyData.benefits} for:item="benefit">
+                                <li key={benefit} class="slds-item slds-text-body_regular">{benefit}</li>
+                            </template>
+                        </ul>
+                    </lightning-accordion-section>
+                </lightning-accordion>
+            </template>
+
+            <!-- Vouchers -->
+            <template lwc:if={hasVouchers}>
+                <h3 class="slds-text-heading_small slds-m-bottom_small title-text">Active Vouchers</h3>
+                <div class="slds-grid slds-wrap slds-gutters_x-small">
+                    <template for:each={loyaltyData.vouchers} for:item="voucher">
+                        <div key={voucher.code} class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
+                            <div class="slds-box slds-box_x-small voucher-card">
+                                <p class="voucher-value">{voucher.value}</p>
+                                <p class="voucher-code">{voucher.code}</p>
+                                <p class="voucher-expiry">Expires: {voucher.expiryDate}</p>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </template>
+
+        <!-- Empty State -->
+        <template lwc:else>
+            <template lwc:if={isLoading}></template>
+            <template lwc:else>
+                <div class="slds-illustration slds-illustration_small">
+                    <p class="slds-text-body_regular slds-text-color_weak">No loyalty membership found.</p>
+                </div>
+            </template>
+        </template>
+    </div>
+</template>

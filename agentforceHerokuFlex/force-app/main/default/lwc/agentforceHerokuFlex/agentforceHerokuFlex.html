@@ -1,0 +1,55 @@
+<template>
+    <template if:true={isImmersive}>
+        <div class="chat-container">
+            <template if:false={isChatOpen}>
+                <div class="chat-bubble" onclick={toggleChat}>
+                    <lightning-icon 
+                        icon-name="utility:chat" 
+                        alternative-text="Abrir Chat"
+                        variant="inverse"
+                        size="medium"
+                        title="Abrir Chat">
+                    </lightning-icon>
+                </div>
+            </template>
+
+            <template if:true={isChatOpen}>
+                <div class="chat-window" style={chatWindowStyle}>
+                    <div class="chat-header">
+                        <span class="header-title">Asistente Virtual</span>
+                        <lightning-button-icon 
+                            icon-name="utility:close" 
+                            variant="bare"
+                            alternative-text="Cerrar" 
+                            class="close-button"
+                            title="Cerrar Chat" 
+                            onclick={toggleChat}>
+                        </lightning-button-icon>
+                    </div>
+
+                    <div class="iframe-container">
+                        <iframe 
+                            src="https://agentforce-api-chat-94ef87f787b6.herokuapp.com/" 
+                            width="100%" 
+                            height="100%" 
+                            frameborder="0">
+                        </iframe>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </template>
+
+    <template if:false={isImmersive}>
+        <lightning-card>
+            <div class="iframe-container" style={cardStyle}>
+                <iframe 
+                    src="https://agentforce-api-chat-94ef87f787b6.herokuapp.com/" 
+                    width="100%" 
+                    height="100%" 
+                    frameborder="0">
+                </iframe>
+            </div>
+        </lightning-card>
+    </template>
+</template>

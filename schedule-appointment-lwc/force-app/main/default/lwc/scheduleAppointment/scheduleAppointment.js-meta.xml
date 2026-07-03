@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Schedule Appointment</masterLabel>
+    <description>Storefront button to schedule an appointment. Opens a calendar to pick a date and time slot, then saves the booking to the logged-in user’s Person Account Description.</description>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="buttonLabel" type="String" default="Schedule an appointment" label="Button label" description="Label for the schedule button (editable in Experience Builder)."/>
+            <property name="productId" type="String" default="" label="Product ID" description="Optional. Product2 Id when the component is on a PDP. Used to store which product the booking is for."/>
+            <property name="productName" type="String" default="" label="Product name" description="Optional. Product name when on a PDP. Preferred over Product ID in the saved booking. Leave blank to resolve from Product ID or page context."/>
+        </targetConfig>
+        <targetConfig targets="lightning__AppPage">
+            <property name="buttonLabel" type="String" default="Schedule an appointment" label="Button label" description="Label for the schedule button."/>
+            <property name="productId" type="String" default="" label="Product ID" description="Optional. Product2 Id when on a product page."/>
+            <property name="productName" type="String" default="" label="Product name" description="Optional. Product name for the booking."/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

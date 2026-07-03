@@ -1,0 +1,247 @@
+.schedule-appointment {
+    --slot-bg: #f3f3f3;
+    --slot-filled: #e8e8e8;
+    --slot-booked: #c8e6c9;
+    --slot-selected: #a5d6a7;
+    --border: #ddd;
+    --error-bg: #ffebee;
+    --error-text: #c62828;
+}
+
+.action-row {
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cta-button {
+    font-weight: 600;
+}
+
+/* Modal */
+.scheduler-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+}
+
+.modal-card {
+    position: relative;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+    max-width: 420px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.close-btn {
+    margin-left: auto;
+}
+
+.modal-body {
+    padding: 1.25rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.error-banner {
+    padding: 0.75rem 1rem;
+    background: var(--error-bg);
+    color: var(--error-text);
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.login-required {
+    padding: 1rem;
+    text-align: center;
+    color: #666;
+}
+
+/* Calendar */
+.calendar-view {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.calendar-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.calendar-month {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #666;
+}
+
+.weekday {
+    padding: 0.25rem 0;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.day-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fff;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.day-cell:hover:not(.day-disabled):not(.day-padding) {
+    background: #f0f7ff;
+    border-color: #0176d3;
+}
+
+.day-cell.day-padding {
+    border: none;
+    background: transparent;
+    cursor: default;
+}
+
+.day-cell.day-disabled {
+    background: var(--slot-filled);
+    color: #999;
+    cursor: not-allowed;
+}
+
+/* Slots */
+.slots-view {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.back-link {
+    background: none;
+    border: none;
+    color: #0176d3;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0;
+    text-align: left;
+    width: fit-content;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.slot-date {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.slots-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.slot-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: var(--slot-bg);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    min-height: 56px;
+}
+
+.slot-cell:hover:not(.slot-filled):not(.slot-booked) {
+    background: #e8f4fc;
+    border-color: #0176d3;
+}
+
+.slot-cell.slot-filled {
+    background: var(--slot-filled);
+    color: #888;
+    cursor: not-allowed;
+}
+
+.slot-cell.slot-booked,
+.slot-cell.slot-selected {
+    background: var(--slot-booked);
+    border-color: #81c784;
+    cursor: default;
+}
+
+.slot-time {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.slot-badge {
+    font-size: 0.7rem;
+    margin-top: 0.25rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.slot-badge.filled {
+    color: #888;
+}
+
+.slot-badge.booked,
+.slot-badge.selected {
+    color: #2e7d32;
+}
